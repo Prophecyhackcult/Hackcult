@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniSync - Student Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex">
+
+  <aside class="w-64 bg-[#0d0f17] text-gray-400 flex flex-col justify-between p-4 flex-shrink-0 min-h-screen">
+    <div>
+      <div class="flex items-center gap-3 px-3 py-4 border-b border-gray-800">
+        <div class="bg-indigo-600 text-white p-2 rounded-lg">
+          <i data-lucide="layers" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-white text-lg leading-none">UniSync</h1>
+          <span class="text-[10px] tracking-wider uppercase text-gray-500">STUDENT PORTAL</span>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-1">
+        <p class="px-3 text-[10px] font-semibold tracking-wider text-gray-500 uppercase">Navigation</p>
+        <button id="nav-dashboard" onclick="switchTab('dashboard')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white font-medium text-sm transition">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i> Dashboard
+        </button>
+        <button id="nav-attendance" onclick="switchTab('attendance')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-800 text-gray-400 text-sm transition">
+          <i data-lucide="calendar-check-2" class="w-4 h-4"></i> Attendance
+        </button>
+        <button id="nav-results" onclick="switchTab('results')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-800 text-gray-400 text-sm transition">
+          <i data-lucide="award" class="w-4 h-4"></i> Results
+        </button>
+        <button id="nav-fees" onclick="switchTab('fees')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-800 text-gray-400 text-sm transition">
+          <i data-lucide="credit-card" class="w-4 h-4"></i> Fees
+        </button>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="pt-4 border-t border-gray-800 flex items-center justify-between px-3">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+            <span class="avatar-initials">AS</span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-white student-name">Loading...</p>
+            <p class="text-[10px] text-gray-500">Student</p>
+          </div>
+        </div>
+        <button onclick="window.location.href='index.html'" class="text-gray-500 hover:text-white"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <header class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+      <h2 id="page-title" class="text-xl font-bold text-gray-800">My Dashboard</h2>
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          <input type="text" placeholder="Search..." class="pl-9 pr-4 py-1.5 bg-gray-100 rounded-lg text-xs border-none focus:ring-2 focus:ring-indigo-500 w-64" />
+        </div>
+        <div class="flex items-center gap-2 pl-2 border-l border-gray-200">
+          <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+            <span class="avatar-initials">AS</span>
+          </div>
+          <span class="text-xs font-semibold student-name">Loading...</span>
+        </div>
+      </div>
+    </header>
+
+    <div id="view-dashboard" class="p-8 space-y-6">
+      <div class="bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg flex justify-between items-center">
+        <div>
+          <p class="text-sm opacity-80">Good morning,</p>
+          <h1 class="text-3xl font-bold student-name">Loading...</h1>
+          <p class="text-xs opacity-80 mt-1">
+            <span id="student-id">--</span> • <span id="department">--</span> • Semester <span id="semester">--</span>
+          </p>
+        </div>
+        <div class="flex gap-3">
+          <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-xl text-center border border-white/10">
+            <p class="text-xl font-bold"><span id="banner-attendance">--</span>%</p>
+            <p class="text-[10px] opacity-70">Attendance</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-xl text-center border border-white/10">
+            <p class="text-xl font-bold" id="banner-cgpa">--</p>
+            <p class="text-[10px] opacity-70">CGPA</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-xl text-center border border-white/10">
+            <p class="text-xl font-bold">#<span id="rank">--</span> / <span id="total-students">--</span></p>
+            <p class="text-[10px] opacity-70">Rank</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm relative">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 absolute top-4 right-4"></span>
+          <i data-lucide="calendar" class="w-5 h-5 text-indigo-500 bg-indigo-50 p-1 rounded-md mb-2"></i>
+          <p class="text-2xl font-bold"><span id="card-attendance">--</span>%</p>
+          <p class="text-xs text-gray-500 mt-1">Attendance</p>
+          <p class="text-[11px] text-emerald-600 font-medium mt-1"><span id="attended-classes">--</span>/<span id="total-classes">--</span> classes</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm relative">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 absolute top-4 right-4"></span>
+          <i data-lucide="star" class="w-5 h-5 text-amber-500 bg-amber-50 p-1 rounded-md mb-2"></i>
+          <p class="text-2xl font-bold" id="card-cgpa">--</p>
+          <p class="text-xs text-gray-500 mt-1">Current GPA</p>
+          <p class="text-[11px] text-emerald-600 font-medium mt-1">Sem <span id="card-semester">--</span> • <span id="cgpa-remark">--</span></p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm relative">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 absolute top-4 right-4"></span>
+          <i data-lucide="check-square" class="w-5 h-5 text-emerald-500 bg-emerald-50 p-1 rounded-md mb-2"></i>
+          <p class="text-2xl font-bold" id="fee-status">--</p>
+          <p class="text-xs text-gray-500 mt-1">Fee Status</p>
+          <p class="text-[11px] text-emerald-600 font-medium mt-1" id="fee-remark">--</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm relative">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 absolute top-4 right-4"></span>
+          <i data-lucide="book-open" class="w-5 h-5 text-blue-500 bg-blue-50 p-1 rounded-md mb-2"></i>
+          <p class="text-2xl font-bold"><span id="credits-earned">--</span>/<span id="total-credits">--</span></p>
+          <p class="text-xs text-gray-500 mt-1">Credits Earned</p>
+          <p class="text-[11px] text-emerald-600 font-medium mt-1"><span id="credits-percentage">--</span>% complete</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-7 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-gray-800 text-sm">My Attendance Trend</h3>
+            <span class="bg-indigo-50 text-indigo-600 text-xs font-semibold px-2.5 py-1 rounded-full"><span id="avg-attendance">--</span>% avg</span>
+          </div>
+          <div class="h-56">
+            <canvas id="attendanceChart"></canvas>
+          </div>
+        </div>
+
+        <div class="col-span-5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-gray-800 text-sm mb-4">Upcoming Examinations</h3>
+          <div class="space-y-3" id="exams-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-attendance" class="p-8 space-y-6 hidden">
+      <div class="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 flex items-center gap-3 text-xs text-amber-800 font-medium">
+        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
+        <p>Students with cumulative attendance below 75% will receive an automated alert.</p>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-gray-800">Class Roster (30 Students)</h3>
+          <span class="text-xs text-gray-400 font-medium">CSE — Semester 5</span>
+        </div>
+
+        <table class="w-full text-left text-xs">
+          <thead class="bg-gray-50/70 text-gray-400 font-semibold border-b border-gray-100">
+            <tr>
+              <th class="py-3.5 px-5">ROLL NO</th>
+              <th class="py-3.5 px-5">STUDENT ID</th>
+              <th class="py-3.5 px-5">NAME</th>
+              <th class="py-3.5 px-5">ATTENDANCE %</th>
+              <th class="py-3.5 px-5">STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-table-body" class="divide-y divide-gray-100 font-medium text-gray-700"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="view-results" class="p-8 space-y-6 hidden">
+      <div class="grid grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <p class="text-xs text-gray-400 font-bold uppercase">Cumulative GPA</p>
+          <p class="text-3xl font-extrabold text-indigo-600 mt-2" id="results-cgpa">8.4</p>
+          <p class="text-xs text-emerald-600 font-semibold mt-1">First Class with Distinction</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <p class="text-xs text-gray-400 font-bold uppercase">Class Rank</p>
+          <p class="text-3xl font-extrabold text-amber-500 mt-2">#3 <span class="text-xs font-normal text-gray-400">/ 30</span></p>
+          <p class="text-xs text-gray-500 font-semibold mt-1">Top 10% Percentile</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <p class="text-xs text-gray-400 font-bold uppercase">Total Credits</p>
+          <p class="text-3xl font-extrabold text-emerald-600 mt-2">84 / 180</p>
+          <p class="text-xs text-gray-500 font-semibold mt-1">46.6% Degree Progress</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-gray-800">Semester Grade Sheet</h3>
+          <span class="text-xs text-indigo-600 font-semibold cursor-pointer">Download PDF Transcript</span>
+        </div>
+        <table class="w-full text-left text-xs">
+          <thead class="bg-gray-50/70 text-gray-400 font-semibold border-b border-gray-100">
+            <tr>
+              <th class="py-3.5 px-5">COURSE CODE</th>
+              <th class="py-3.5 px-5">SUBJECT</th>
+              <th class="py-3.5 px-5">CREDITS</th>
+              <th class="py-3.5 px-5">SCORE</th>
+              <th class="py-3.5 px-5">GRADE</th>
+            </tr>
+          </thead>
+          <tbody id="results-table-body" class="divide-y divide-gray-100 font-medium text-gray-700"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="view-fees" class="p-8 space-y-6 hidden">
+      <div class="grid grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <p class="text-xs text-gray-400 font-bold uppercase">Total Annual Fee</p>
+          <p class="text-3xl font-extrabold text-gray-800 mt-2">₹1,20,000</p>
+          <p class="text-xs text-gray-400 font-semibold mt-1">Academic Year 2026-2027</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <p class="text-xs text-gray-400 font-bold uppercase">Paid Amount</p>
+          <p class="text-3xl font-extrabold text-emerald-600 mt-2">₹1,20,000</p>
+          <p class="text-xs text-emerald-600 font-semibold mt-1">Cleared</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <p class="text-xs text-gray-400 font-bold uppercase">Due Dues</p>
+          <p class="text-3xl font-extrabold text-slate-700 mt-2">₹0</p>
+          <p class="text-xs text-emerald-600 font-semibold mt-1">No outstanding payment</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-gray-800">Fee Payment Receipts</h3>
+          <button class="bg-indigo-600 text-white text-xs font-semibold px-4 py-1.5 rounded-lg">Pay Online</button>
+        </div>
+        <table class="w-full text-left text-xs">
+          <thead class="bg-gray-50/70 text-gray-400 font-semibold border-b border-gray-100">
+            <tr>
+              <th class="py-3.5 px-5">RECEIPT ID</th>
+              <th class="py-3.5 px-5">DATE</th>
+              <th class="py-3.5 px-5">DESCRIPTION</th>
+              <th class="py-3.5 px-5">AMOUNT</th>
+              <th class="py-3.5 px-5">STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="fees-table-body" class="divide-y divide-gray-100 font-medium text-gray-700"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+    let chartInstance = null;
+
+    // Multi-tab View Switcher
+    function switchTab(tab) {
+      const tabs = ['dashboard', 'attendance', 'results', 'fees'];
+      
+      tabs.forEach(t => {
+        const viewEl = document.getElementById(`view-${t}`);
+        const navBtn = document.getElementById(`nav-${t}`);
+        
+        if (t === tab) {
+          viewEl.classList.remove('hidden');
+          navBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white font-medium text-sm transition";
+        } else {
+          viewEl.classList.add('hidden');
+          navBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-800 text-gray-400 text-sm transition";
+        }
+      });
+
+      const titleMap = {
+        dashboard: "My Dashboard",
+        attendance: "Attendance Management",
+        results: "Academic Results",
+        fees: "Fee Payments & Receipts"
+      };
+      document.getElementById('page-title').innerText = titleMap[tab];
+
+      if (tab === 'attendance') fetch30StudentsAttendance();
+      if (tab === 'results') fetchResults();
+      if (tab === 'fees') fetchFees();
+    }
+
+    // Tab 1: Dashboard Initialization
+    async function initDashboard() {
+      switchTab('dashboard');
+      try {
+        const response = await fetch('http://127.0.0.1:5000/api/student/dashboard');
+        const data = await response.json();
+
+        document.querySelectorAll('.student-name').forEach(el => el.innerText = data.student_name);
+        document.querySelectorAll('.avatar-initials').forEach(el => {
+          el.innerText = data.student_name.split(' ').map(n => n[0]).join('');
+        });
+        document.getElementById('student-id').innerText = data.student_id;
+        document.getElementById('department').innerText = data.department;
+        document.getElementById('semester').innerText = data.semester;
+        document.getElementById('card-semester').innerText = data.semester;
+
+        document.getElementById('banner-attendance').innerText = data.attendance_percentage;
+        document.getElementById('card-attendance').innerText = data.attendance_percentage;
+        document.getElementById('avg-attendance').innerText = data.attendance_percentage;
+        document.getElementById('attended-classes').innerText = data.attended_classes;
+        document.getElementById('total-classes').innerText = data.total_classes;
+
+        document.getElementById('banner-cgpa').innerText = data.cgpa;
+        document.getElementById('card-cgpa').innerText = data.cgpa;
+        document.getElementById('cgpa-remark').innerText = data.cgpa_remark;
+
+        document.getElementById('rank').innerText = data.rank;
+        document.getElementById('total-students').innerText = data.total_students;
+
+        document.getElementById('fee-status').innerText = data.fee_status;
+        document.getElementById('fee-remark').innerText = data.fee_remark;
+
+        document.getElementById('credits-earned').innerText = data.credits_earned;
+        document.getElementById('total-credits').innerText = data.total_credits;
+        document.getElementById('credits-percentage').innerText = Math.round((data.credits_earned / data.total_credits) * 100);
+
+        renderAttendanceChart(data.attendance_history);
+        renderExams(data.upcoming_exams);
+      } catch (err) {
+        console.error("Error loading dashboard profile:", err);
+      }
+    }
+
+    // Tab 2: Attendance Data
+    async function fetch30StudentsAttendance() {
+      try {
+        const res = await fetch('http://127.0.0.1:5000/api/students/attendance');
+        const students = await res.json();
+        const tbody = document.getElementById('attendance-table-body');
+        tbody.innerHTML = '';
+
+        students.forEach(student => {
+          const isHigh = student.attendance_percentage >= 75;
+          const statusBg = isHigh ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600';
+          const barBg = isHigh ? 'bg-emerald-500' : 'bg-rose-500';
+
+          tbody.innerHTML += `
+            <tr class="hover:bg-gray-50/50">
+              <td class="py-3.5 px-5 text-gray-400 font-bold">${student.roll_no}</td>
+              <td class="py-3.5 px-5 text-gray-500">${student.student_id}</td>
+              <td class="py-3.5 px-5 font-bold text-gray-800 flex items-center gap-2">
+                <span class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold">
+                  ${student.name.split(' ').map(n => n[0]).join('')}
+                </span>
+                ${student.name}
+              </td>
+              <td class="py-3.5 px-5">
+                <div class="flex items-center gap-2">
+                  <div class="w-16 bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="${barBg} h-full" style="width: ${student.attendance_percentage}%"></div>
+                  </div>
+                  <span class="font-bold text-xs">${student.attendance_percentage}%</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-5">
+                <span class="${statusBg} font-bold text-[10px] px-2.5 py-1 rounded-md">${student.status}</span>
+              </td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error("Error fetching attendance roster:", err);
+      }
+    }
+
+    // Tab 3: Results Data
+    async function fetchResults() {
+      try {
+        const res = await fetch('http://127.0.0.1:5000/api/student/results');
+        const courses = await res.json();
+        const tbody = document.getElementById('results-table-body');
+        tbody.innerHTML = '';
+
+        courses.forEach(course => {
+          tbody.innerHTML += `
+            <tr class="hover:bg-gray-50/50">
+              <td class="py-3.5 px-5 font-bold text-gray-400">${course.code}</td>
+              <td class="py-3.5 px-5 font-bold text-gray-800">${course.name}</td>
+              <td class="py-3.5 px-5 text-gray-500">${course.credits}</td>
+              <td class="py-3.5 px-5 font-bold text-indigo-600">${course.score}/100</td>
+              <td class="py-3.5 px-5"><span class="bg-emerald-50 text-emerald-600 font-bold px-2 py-1 rounded-md">${course.grade}</span></td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error("Error fetching results:", err);
+      }
+    }
+
+    // Tab 4: Fees Data
+    async function fetchFees() {
+      try {
+        const res = await fetch('http://127.0.0.1:5000/api/student/fees');
+        const receipts = await res.json();
+        const tbody = document.getElementById('fees-table-body');
+        tbody.innerHTML = '';
+
+        receipts.forEach(item => {
+          tbody.innerHTML += `
+            <tr class="hover:bg-gray-50/50">
+              <td class="py-3.5 px-5 font-bold text-gray-400">${item.receipt_id}</td>
+              <td class="py-3.5 px-5 text-gray-500">${item.date}</td>
+              <td class="py-3.5 px-5 font-bold text-gray-800">${item.description}</td>
+              <td class="py-3.5 px-5 font-bold text-gray-800">₹${item.amount}</td>
+              <td class="py-3.5 px-5"><span class="bg-emerald-50 text-emerald-600 font-bold px-2 py-1 rounded-md">${item.status}</span></td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error("Error fetching fee details:", err);
+      }
+    }
+
+    function renderAttendanceChart(history) {
+      const ctx = document.getElementById('attendanceChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.25)');
+      gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: history.months,
+          datasets: [{
+            data: history.values,
+            borderColor: '#6366f1',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            backgroundColor: gradient,
+            pointBackgroundColor: '#6366f1',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { min: 60, max: 100, grid: { color: '#f3f4f6' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderExams(exams) {
+      const container = document.getElementById('exams-container');
+      container.innerHTML = '';
+      exams.forEach(exam => {
+        container.innerHTML += `
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+            <div class="flex items-center gap-3">
+              <div class="bg-indigo-100 text-indigo-700 rounded-lg p-2 text-center w-10">
+                <p class="text-xs font-bold leading-none">${exam.day}</p>
+                <p class="text-[9px] uppercase font-semibold mt-0.5">${exam.month}</p>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-gray-800">${exam.subject}</p>
+                <p class="text-[10px] text-gray-500">${exam.time} • ${exam.location}</p>
+              </div>
+            </div>
+            <span class="text-xs text-indigo-600 font-medium">${exam.type}</span>
+          </div>
+        `;
+      });
+    }
+
+    window.onload = initDashboard;
+  </script>
+</body>
+</html>
